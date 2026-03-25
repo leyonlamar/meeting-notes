@@ -1,31 +1,25 @@
 <!-- Parent: ../AGENTS.md -->
-<!-- Generated: 2026-03-21 -->
+<!-- Generated: 2026-03-21 | Updated: 2026-03-24 -->
 
 # Rust Backend (src-tauri/)
 
 ## Purpose
-Tauri 2 Rust backend providing SQLite persistence, AI provider abstraction, export services, portable mode detection, and secure credential storage.
+Tauri 2 Rust backend providing SQLite persistence with FTS5 search, AI provider abstraction (mock + OpenAI-compatible), export services (Markdown/CSV/JSON/PDF), portable mode detection, and secure credential storage via Windows Credential Store.
 
 ## Key Files
 | File | Description |
 |------|-------------|
-| `Cargo.toml` | Rust dependencies |
-| `tauri.conf.json` | Tauri 2 configuration (plugins, window, bundle) |
-| `capabilities/default.json` | Tauri 2 permission capabilities |
+| `Cargo.toml` | Rust dependencies (tauri 2, rusqlite bundled, keyring, reqwest, chrono, ulid, printpdf) |
+| `tauri.conf.json` | Tauri 2 configuration: window (1280x800), bundle (NSIS + MSI), plugins (fs, dialog, shell) |
+| `capabilities/default.json` | Tauri 2 permission capabilities for main window |
 | `build.rs` | Tauri build script |
 
 ## Subdirectories
 | Directory | Purpose |
 |-----------|---------|
-| `src/app/commands/` | Tauri command handlers — thin layer delegating to services |
-| `src/app/` | AppState initialization |
-| `src/domain/` | Domain models: Meeting, ActionItem, Minutes, Extraction, Settings |
-| `src/services/` | Business logic: MeetingService, ActionItemService, ExportService |
-| `src/db/` | SQLite: connection, migrations, repos (meeting, action_item, search) |
-| `src/ai/` | AI provider trait, MockProvider, OpenAiCompatibleProvider |
-| `src/config/` | Portable mode detection, AppConfig |
-| `src/export/` | Re-exports from ExportService |
-| `src/utils/` | AppError with Tauri-serializable errors |
+| `src/` | Rust source code (see `src/AGENTS.md`) |
+| `capabilities/` | Tauri 2 capability/permission definitions |
+| `icons/` | App icons (32x32, 128x128, 128x128@2x, icon.ico) |
 
 ## For AI Agents
 
@@ -34,7 +28,7 @@ Tauri 2 Rust backend providing SQLite persistence, AI provider abstraction, expo
 - Services use `Database::with_conn()` for thread-safe DB access
 - All IDs are ULIDs generated via `ulid::Ulid::new()`
 - Timestamps are ISO 8601 UTC strings
-- Errors must implement `Serialize` for Tauri IPC
+- Errors must implement `Serialize` for Tauri IPC (see `utils/errors.rs`)
 - API keys go through `keyring` crate — NEVER store in config files or log them
 - AI providers implement the `AiProvider` trait
 
@@ -48,3 +42,5 @@ Tauri 2 Rust backend providing SQLite persistence, AI provider abstraction, expo
 - `from_str` / `as_str` pattern for enum serialization in SQLite
 - JSON arrays stored as TEXT columns for simple lists (tags)
 - FTS5 index updated after note/minutes changes
+
+<!-- MANUAL: -->

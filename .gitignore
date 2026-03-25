@@ -6,4 +6,5 @@ target/
 data/
 portable
 .omc/
+.claude/
 tsconfig.tsbuildinfo
